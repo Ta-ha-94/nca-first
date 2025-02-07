@@ -1,34 +1,52 @@
 //  The DOMContentLoaded event is fired when the HTML is fully loaded
-//  Fetching data after HTML is loaded.
 document.addEventListener("DOMContentLoaded", () => {
-    fetch('db/data.json')   //  Returns a Promise
+    fetch('db/data.json')   // Fetching JSON data
         .then(response => response.json())
         .then(data => renderNews(data))
-        .catch(error => console.error("Error loading JSON:", error)); //    Catch gets executed in case Promise was rejected
+        .catch(error => console.error("Error loading JSON:", error));
 });
 
-//  Function to read JSON data and dynamically create HTML elements
+// Function to dynamically create HTML elements based on JSON data
 function renderNews(data) {
-    const container = document.getElementById("news-container");
+    const mainArticle = document.getElementById("main-article");
+    const sideArticle = document.getElementById("side-articles");
 
-    //  Check if article array is empty
-    if (!data.articles) {
+    //  Validate JSON structure
+    if (!data.articles || !Array.isArray(data.articles)) {
         console.error("Invalid JSON structure");
         return;
     }
 
-    //  Loops through each article
+    let firstArticle = true;
     data.articles.forEach(article => {
         const newsItem = document.createElement("div");
-        newsItem.classList.add("news-item"); // Adds css class to each div element
 
-        newsItem.innerHTML = `
+        newsItem.classList.add("article");
+
+        if(firstArticle){
+            newsItem.innerHTML = `
+            <p>${article.thumbnail.title}</p>
             <img src="${article.thumbnail.src}" alt="${article.thumbnail.title}" width="${article.thumbnail.width}" height="${article.thumbnail.height}">
-            <h2>${article.headline}</h2>
-            <p>${article.standfirst}</p>
-            <a href="${article.link}" target="_blank">Read More</a>
+            <a href="${article.link}" target="_blank">
+                <h2>${article.headline}</h2>
+            </a>
         `;
-
-        container.appendChild(newsItem);
+            mainArticle.appendChild(newsItem);
+            firstArticle = false;
+        }else{
+            newsItem.innerHTML = `
+            <div class="side-main-div">
+                <p>${article.thumbnail.title}</p>
+                <h2>${article.headline}</h2>
+                <div class="side-article">
+                    <img src="${article.thumbnail.src}" alt="${article.thumbnail.title}" width="${article.thumbnail.width}" height="${article.thumbnail.height}">
+                    <a href="${article.link}" target="_blank">
+                        <p>${article.standfirst || "Read more about this news."}</p>
+                    </a>
+                </div>
+            </div>
+        `;
+            sideArticle.appendChild(newsItem);
+        }
     });
 }
