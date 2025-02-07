@@ -34,8 +34,9 @@ function renderNews(data) {
             mainArticle.appendChild(newsItem);
             firstArticle = false;
         }else{
-            newsItem.innerHTML = `
-            <div class="side-main-div">
+            const sideMainDiv = document.createElement("div");
+            sideMainDiv.classList.add("side-main-div")
+            sideMainDiv.innerHTML = `
                 <p>${article.thumbnail.title}</p>
                 <h2>${article.headline}</h2>
                 <div class="side-article">
@@ -44,8 +45,21 @@ function renderNews(data) {
                         <p>${article.standfirst || "Read more about this news."}</p>
                     </a>
                 </div>
-            </div>
-        `;
+            `;
+
+            const sideMainDivMobile = document.createElement("div");
+            sideMainDivMobile.classList.add("side-main-div-mobile")
+            sideMainDivMobile.innerHTML = `
+                <p>${article.thumbnail.title}</p>
+                <div class="side-article">
+                    <img src="${article.thumbnail.src}" alt="${article.thumbnail.title}" width="${article.thumbnail.width}" height="${article.thumbnail.height}">
+                    <a href="${article.link}" target="_blank">
+                        <h2>${article.headline}</h2>
+                    </a>
+                </div>
+            `;
+            newsItem.appendChild(sideMainDiv);
+            newsItem.appendChild(sideMainDivMobile);
             sideArticle.appendChild(newsItem);
         }
     });
